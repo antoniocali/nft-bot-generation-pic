@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "nft-bot"
+version = "0.1.0"
+description = "Nft Bot furry generation"
+authors = ["Antonio <antoniodavidecali@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Pillow = "^8.3.2"
+marshmallow = "^3.13.0"
+dynaconf = "^3.1.7"
+
+[tool.poetry.dev-dependencies]
+autopep8 = "^1.5.7"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,42 @@
+{
+    "input_folder": "images",
+    "output_folder": "output",
+    "stackable_characteristics": [
+        {
+            "body_name": "background",
+            "z_index": 0,
+            "nullable": false,
+            "folder_name": "background"
+        },
+        {
+            "body_name": "body",
+            "z_index": 1,
+            "nullable": false,
+            "folder_name": "corpo"
+        },
+        {
+            "body_name": "muso",
+            "z_index": 2,
+            "nullable": false,
+            "folder_name": "muso"
+        },
+        {
+            "body_name": "orecchie",
+            "z_index": 3,
+            "nullable": false,
+            "folder_name": "orecchie"
+        },
+        {
+            "body_name": "extra",
+            "z_index": 5,
+            "nullable": true,
+            "folder_name": "extra"
+        },
+        {
+            "body_name": "occhi",
+            "z_index": 4,
+            "nullable": false,
+            "folder_name": "occhi"
+        }
+    ]
+}
