@@ -1,3 +1,4 @@
+from models.stats import SingleStat
 from schemas import BodyPartSchema, SingleSchema
 from utils import get_files, get_path, get_rarity, remove_ext
 from models import BodyPart, Single, SINGLE_NULL
@@ -14,8 +15,11 @@ def run(config_file: str):
     input_folder = settings.input_folder
     output_folder = settings.output_folder
     stackable_characteristics = settings.stackable_characteristics
-    body_parts = get_body_parts(stackable_characteristics)
-    possible_choices = generate_dictionary(body_parts)
+    body_parts: List[BodyPart] = get_body_parts(stackable_characteristics)
+    stats = create_stats(body_parts)
+    pprint(stats)
+    possible_choices: Dict[int, Dict[str, Single]
+                           ] = generate_dictionary(body_parts)
     random_pic = random_metadata(possible_choices)
     generate_image(random_pic)
 
@@ -23,6 +27,20 @@ def run(config_file: str):
 def get_body_parts(_json: List[Dict[str, Any]]) -> List[BodyPart]:
     schema = BodyPartSchema()
     return [schema.load(item) for item in _json]
+
+
+def create_stats(stacks: List[BodyPart]) -> List[SingleStat]:
+    schema = SingleSchema()
+    _stat = []
+    input_folder_name = get_path(settings.input_folder)
+    for elem in stacks:
+        folder_name = join(input_folder_name, elem.folder_name)
+        all_files = get_files(folder_name)
+        enhanced_files = [{"body_name": elem.body_name, "file_name": f,
+                           "folder_name": folder_name, "z_index": elem.z_index} for f in all_files]
+        list_singles = [schema.load(f) for f in enhanced_files]
+        _stat.append(SingleStat(elem.body_name, list_singles=list_singles))
+    return _stat
 
 
 def generate_dictionary(stacks: List[BodyPart]) -> Dict[int, Dict[str, List[Single]]]:
@@ -34,7 +52,7 @@ def generate_dictionary(stacks: List[BodyPart]) -> Dict[int, Dict[str, List[Sing
         folder_name = join(input_folder_name, elem.folder_name)
         all_files = get_files(folder_name)
         enhanced_files = [{"body_name": elem.body_name, "file_name": f,
-                           "folder_name": folder_name} for f in all_files]
+                           "folder_name": folder_name, "z_index": elem.z_index} for f in all_files]
         singles_list = [schema.load(f) for f in enhanced_files]
         if elem.nullable:
             singles_list.append(SINGLE_NULL)
@@ -45,11 +63,12 @@ def generate_dictionary(stacks: List[BodyPart]) -> Dict[int, Dict[str, List[Sing
 
 def random_metadata(_dict: Dict[int, Dict[str, List[Single]]]) -> List[Single]:
     g_image = []
-    for z, list_body_part in _dict.items():
+    for _, list_body_part in _dict.items():
         for _, possibles in list_body_part.items():
             random_choice = random.choice(possibles)
             g_image.append(random_choice)
     return g_image
+
 
 def generate_image(_list: List[Single]):
     image = Image.open(_list[0].file_uri).convert("RGBA")
@@ -59,6 +78,7 @@ def generate_image(_list: List[Single]):
             image = Image.alpha_composite(image, tmp_image)
 
     image.save("output.png")
+
 
 if __name__ == "__main__":
     run("nft.config.json")

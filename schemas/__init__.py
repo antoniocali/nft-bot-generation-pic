@@ -19,10 +19,11 @@ class SingleSchema(Schema):
     body_name = fields.Str(required=True)
     file_name = fields.Str(required=True)
     folder_name = fields.Str(required=True)
+    z_index = fields.Int(required=True)
 
     @post_load
     def make_model(self, data, **kwargs) -> Single:
         file_uri = join(data.get("folder_name"), data.get("file_name"))
         single_name = remove_ext(data.get("file_name"))
         rarity = get_rarity(single_name)
-        return Single(body_name=data.get("body_name"), single_name=single_name, file_uri=file_uri, rarity=rarity)
+        return Single(body_name=data.get("body_name"), single_name=single_name, file_uri=file_uri, rarity=rarity, z_index=data.get("z_index"))
