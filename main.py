@@ -12,12 +12,12 @@ settings = Dynaconf(settings_files=["nft.config.json"])
 
 
 def run(config_file: str):
-    input_folder = settings.input_folder
-    output_folder = settings.output_folder
     stackable_characteristics = settings.stackable_characteristics
     body_parts: List[BodyPart] = get_body_parts(stackable_characteristics)
-    stats = create_stats(body_parts)
+    possible_choices = gen_dict_single(body_parts)
+    stats = create_stats(possible_choices)
     pprint(stats)
+    pprint(gen_dict_single(body_parts))
     possible_choices: Dict[int, Dict[str, Single]
                            ] = generate_dictionary(body_parts)
     random_pic = random_metadata(possible_choices)
@@ -28,20 +28,24 @@ def get_body_parts(_json: List[Dict[str, Any]]) -> List[BodyPart]:
     schema = BodyPartSchema()
     return [schema.load(item) for item in _json]
 
-
-def create_stats(stacks: List[BodyPart]) -> List[SingleStat]:
+def gen_dict_single(stacks: List[BodyPart]) -> Dict[str, List[Single]]:
+    generated_dict = {}
     schema = SingleSchema()
-    _stat = []
     input_folder_name = get_path(settings.input_folder)
     for elem in stacks:
         folder_name = join(input_folder_name, elem.folder_name)
         all_files = get_files(folder_name)
         enhanced_files = [{"body_name": elem.body_name, "file_name": f,
-                           "folder_name": folder_name, "z_index": elem.z_index} for f in all_files]
-        list_singles = [schema.load(f) for f in enhanced_files]
-        _stat.append(SingleStat(elem.body_name, list_singles=list_singles))
-    return _stat
+                            "folder_name": folder_name, "z_index": elem.z_index} for f in all_files]
+        singles_list = [schema.load(f) for f in enhanced_files]
+        if elem.nullable:
+            singles_list.append(SINGLE_NULL)
+        generated_dict[elem.body_name] = singles_list
+    return generated_dict
 
+def create_stats(stacks: Dict[str, List[Single]]) -> List[SingleStat]:
+    schema = SingleSchema()
+    return [SingleStat(body_part, singles) for body_part, singles in stacks.items()]
 
 def generate_dictionary(stacks: List[BodyPart]) -> Dict[int, Dict[str, List[Single]]]:
     generated_dict = {}
