@@ -1,6 +1,7 @@
 {
     "input_folder": "images",
     "output_folder": "output",
+    "tokens": 10,
     "stackable_characteristics": [
         {
             "body_name": "background",

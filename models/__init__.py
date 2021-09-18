@@ -15,7 +15,6 @@ class Single():
     single_name: str
     file_uri: str
     rarity: Rarity
-    z_index: int
 
 
-SINGLE_NULL = Single("","","", Rarity.NORMAL, -1)    
+SINGLE_NULL = Single("","","", Rarity.NORMAL)    

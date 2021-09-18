@@ -2,6 +2,7 @@ from enums.rarity import Rarity, RARITY_DICTIONARY
 from os.path import abspath, isfile, join
 from os import listdir
 from typing import List
+from models import Single
 
 
 def remove_ext(filename: str) -> str:
@@ -22,3 +23,7 @@ def get_path(folder: str) -> str:
 
 def get_files(folder: str) -> List[str]:
     return [f for f in listdir(folder) if isfile(join(folder, f))]
+
+def get_hash(singles: List[Single]) -> str:
+    id_pic = ",".join([f"{elem.body_name}:{elem.single_name}" for elem in singles])
+    return str(hash(id_pic))
