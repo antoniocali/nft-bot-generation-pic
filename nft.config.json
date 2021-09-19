@@ -1,7 +1,7 @@
 {
     "input_folder": "images",
     "output_folder": "output",
-    "tokens": 10,
+    "tokens": 30,
     "stackable_characteristics": [
         {
             "body_name": "background",
@@ -38,6 +38,12 @@
             "z_index": 4,
             "nullable": false,
             "folder_name": "occhi"
+        },
+        {
+            "body_name": "sopracciglia",
+            "z_index": 5,
+            "nullable": true,
+            "folder_name": "sopracciglia"
         }
     ]
 }
